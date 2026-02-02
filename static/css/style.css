@@ -1,9 +1,9 @@
-
 /* =========================================================
    FONTES (dica: prefira <link> no HTML para melhor performance)
    ========================================================= */
 @import url('https://fonts.googleapis.com/css?family=Montserrat:700&display=swap');
 @import url('https://fonts.googleapis.com/css?family=Open+Sans:400,600&display=swap');
+
 
 /* =========================================================
    VARIÁVEIS / TEMA
@@ -1119,6 +1119,38 @@ select.loading {
 
 
 
+/*=========================================================
+  ESPECIAL — mostrar só os ícones dos 4 botões
+=========================================================*/
+@media (max-width: 768px) {
+  #btn-add-cliente .btn-text,
+  #btn-remove-cliente .btn-text,
+  #btn-add-propriedade .btn-text,
+  #btn-remove-propriedade .btn-text {
+    display: none !important;
+  }
+
+  #btn-add-cliente,
+  #btn-remove-cliente,
+  #btn-add-propriedade,
+  #btn-remove-propriedade {
+    padding: 8px;
+    gap: 0;
+  }
+
+  #btn-add-cliente .btn-icon,
+  #btn-remove-cliente .btn-icon,
+  #btn-add-propriedade .btn-icon,
+  #btn-remove-propriedade .btn-icon {
+    margin: 0;
+  }
+}
+
+/* DEBUG TEMPORÁRIO: pinte o fundo quando a regra <= 768px estiver ativa */
+@media (max-width: 768px) {
+  body { outline: 6px solid gold !important; }
+}
+
 
 /* ===================================================================
    RESPONSIVIDADE GERAL — mobile até 768px
@@ -1198,83 +1230,8 @@ table {
   max-width: 100%;
 }
 
-
-
 .tbl-precos td input,
 .tbl-precos td select {
   min-width: 0;   /* importante para grids/tabelas em layouts apertados */
   max-width: 100%;
-}
-
-
-/* ============================
-   Botões responsivos (mobile)
-   - Esconde texto
-   - Troca SVG por emoji + sinal
-   ============================ */
-
-@media (max-width: 640px) {
-  /* 1) Esconde o texto dos 4 botões */
-  #btn-add-cliente .btn-text,
-  #btn-remove-cliente .btn-text,
-  #btn-add-propriedade .btn-text,
-  #btn-remove-propriedade .btn-text {
-    display: none !important;
-  }
-
-  /* 2) Esconde os SVGs originais (deixa só o ::before) */
-  #btn-add-cliente .btn-icon svg,
-  #btn-remove-cliente .btn-icon svg,
-  #btn-add-propriedade .btn-icon svg,
-  #btn-remove-propriedade .btn-icon svg {
-    display: none !important;
-  }
-
-  /* 3) Garante um bom tamanho do ícone (emoji) e espaçamento */
-  #btn-add-cliente .btn-icon,
-  #btn-remove-cliente .btn-icon,
-  #btn-add-propriedade .btn-icon,
-  #btn-remove-propriedade .btn-icon {
-    width: auto !important;
-    height: auto !important;
-    font-size: 18px;            /* ajuste do tamanho do emoji */
-    line-height: 1; 
-  }
-
-  /* 4) Injeta o conteúdo desejado com emoji + sinal */
-
-  /* Produtor (🧑‍🌾) */
-  #btn-add-cliente .btn-icon::before {
-    content: "🧑‍🌾 +";
-  }
-  #btn-remove-cliente .btn-icon::before {
-    content: "🧑‍🌾 −";
-  }
-
-  /* Propriedade (🏡) */
-  #btn-add-propriedade .btn-icon::before {
-    content: "🏡 +";
-  }
-  #btn-remove-propriedade .btn-icon::before {
-    content: "🏡 −";
-  }
-
-  /* 5) Leve ajuste de padding e centralização pro mobile */
-  #btn-add-cliente,
-  #btn-remove-cliente,
-  #btn-add-propriedade,
-  #btn-remove-propriedade {
-    padding: 10px 12px;
-    justify-content: center;
-    gap: 6px;
-    min-height: 40px;           /* touch friendly */
-    min-width: 44px;            /* touch friendly */
-  }
-}
-
-/* (Opcional) melhora visual se o SO preferir menos movimento */
-@media (prefers-reduced-motion: reduce) {
-  .btn, .btn-add-inline, .btn-remove-inline {
-    transition: none !important;
-  }
 }
