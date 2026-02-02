@@ -4,12 +4,20 @@ const CACHE = "laudo-cache-v1";
 const ASSETS = [
   "/",
   "/index.html",
-  "/static/css/style.css",
-  "/static/js/script.js",
-  "/static/json/estados-cidades.json",
+  /*"/static/css/style.css",*/
+  /*"/static/js/script.js",*/
+  /*"/static/json/estados-cidades.json",*/
   "/static/img/background_agro.jpg",
   "/static/img/logo_credinter.png",
 ];
+
+const PRECACHE = [
+  '/',
+  '/index.html',
+  '/static/img/background_agro.jpg',
+  '/static/img/logo_credinter.png'
+]
+
 
 // INSTALL — cacheia arquivo a arquivo (não falha a instalação se 1 item der erro)
 self.addEventListener("install", (event) => {
