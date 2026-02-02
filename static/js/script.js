@@ -58,16 +58,6 @@ function maskInteger(inputEl) {
   });
 }
 
-
-/* Apenas UMA versão de createSocioDivider() no arquivo */
-function createSocioDivider(n) {
-  const div = document.createElement('div');
-  div.className = 'socio-divider';
-  div.innerHTML = `<span class="label">Sócio ${n}</span>`;
-  return div;
-}
-
-
 /* ============================================================
    PREÇOS DO PRODUTO
    ============================================================ */
@@ -2628,6 +2618,13 @@ function boot() {
 
   // PDF
   //initPDF();
+}
+
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/sw.js").catch(console.error);
+  });
 }
 
 window.addEventListener('DOMContentLoaded', boot);
