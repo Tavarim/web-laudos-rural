@@ -1146,63 +1146,36 @@ select.loading {
   }
 }
 
-/* DEBUG TEMPORÁRIO: pinte o fundo quando a regra <= 768px estiver ativa */
-@media (max-width: 768px) {
-  body { outline: 6px solid gold !important; }
-}
-
-
 /* ===================================================================
    RESPONSIVIDADE GERAL — mobile até 768px
    =================================================================== */
-
 @media (max-width: 768px) {
+  .container { padding: 12px; }
 
-  /* container mais estreito */
-  .container {
-    padding: 12px;
-  }
-
-  /* headers e footers empilhados */
-  .app-header,
-  .app-footer {
+  .app-header, .app-footer {
     flex-direction: column;
     text-align: center;
   }
 
-  /* cards com menos padding */
-  .card {
-    padding: 15px;
-  }
+  .card { padding: 15px; }
 
-  /* grid genérica */
   .grid-2,
   #container-clientes,
   #container-proprietarios {
     grid-template-columns: 1fr !important;
   }
 
-  /* divisor de sócio mantém estilo */
-  .socio-divider {
-    margin-top: 20px;
-  }
+  .socio-divider { margin-top: 20px; }
 
-  /* tabelas ficam com largura automática */
-  .table-wrapper {
-    padding: 6px;
-  }
+  .table-wrapper { padding: 6px; }
 
-  /* galeria vira 1 coluna */
   .galeria-grid {
     grid-template-columns: 1fr !important;
     gap: 18px !important;
   }
 
-  .galeria-item img {
-    height: 200px !important;
-  }
+  .galeria-item img { height: 200px !important; }
 
-  /* botões */
   .btn,
   .btn-add-inline,
   .btn-remove-inline {
@@ -1210,28 +1183,11 @@ select.loading {
     justify-content: center;
   }
 
-  /* totalizadores mais compactos */
-  .card-total {
-    padding: 16px;
-  }
+  .card-total { padding: 16px; }
 
   .card-total .totalizador {
     flex-direction: column;
     text-align: center;
     gap: 4px;
   }
-}
-
-.card {
-  overflow: hidden; /* segura qualquer vazamento visual */
-}
-
-table {
-  max-width: 100%;
-}
-
-.tbl-precos td input,
-.tbl-precos td select {
-  min-width: 0;   /* importante para grids/tabelas em layouts apertados */
-  max-width: 100%;
 }
