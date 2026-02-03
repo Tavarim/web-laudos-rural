@@ -477,9 +477,9 @@ select.loading {
 .c-area-util-corte   { width: 60px; }
 .c-quantidade-corte  { width: 70px; }
 .c-peso-corte        { width: 60px; }
-.c-producao          { width: 100px; }
-.c-saldo             { width: 110px; }
-.c-acoes             { width: 110px; }
+.c-producao-corte          { width: 100px; }
+.c-saldo-corte             { width: 110px; }
+.c-acoes-corte             { width: 110px; }
 
 /* Histórico */
 .c-ano-safra-historico   { width: 100px; }
@@ -859,14 +859,34 @@ select.loading {
   /* fallback: se por acaso a última coluna for "Ações" mas não tiver classe,
      esconda a última coluna de tabelas marcadas explicitamente com .tbl-*
      (use com cautela; remova se afetar outra coluna que não seja Ações) */
-  .tbl-agricola  tr > *:last-child,
-  .tbl-precos    tr > *:last-child,
-  .tbl-historico tr > *:last-child,
-  .tbl-pecuaria  tr > *:last-child,
-  .tbl-ovos      tr > *:last-child,
-  .tbl-la        tr > *:last-child,
-  .tbl-bens      tr > *:last-child {
+
+  /* esconda a última coluna apenas em thead/tbody (não no tfoot!) */
+  .tbl-agricola thead tr > *:last-child,
+  .tbl-agricola tbody tr > *:last-child,
+  .tbl-precos thead tr > *:last-child,
+  .tbl-precos tbody tr > *:last-child,
+  .tbl-historico thead tr > *:last-child,
+  .tbl-historico tbody tr > *:last-child,
+  .tbl-pecuaria thead tr > *:last-child,
+  .tbl-pecuaria tbody tr > *:last-child,
+  .tbl-ovos thead tr > *:last-child,
+  .tbl-ovos tbody tr > *:last-child,
+  .tbl-la thead tr > *:last-child,
+  .tbl-la tbody tr > *:last-child,
+  .tbl-bens thead tr > *:last-child,
+  .tbl-bens tbody tr > *:last-child {
     display: none !important;
+  }
+
+  /* E garanta que o tfoot continue aparecendo por completo */
+  .tbl-agricola tfoot tr > *:last-child,
+  .tbl-precos tfoot tr > *:last-child,
+  .tbl-historico tfoot tr > *:last-child,
+  .tbl-pecuaria tfoot tr > *:last-child,
+  .tbl-ovos tfoot tr > *:last-child,
+  .tbl-la tfoot tr > *:last-child,
+  .tbl-bens tfoot tr > *:last-child {
+    display: table-cell !important;
   }
 
 
@@ -928,6 +948,25 @@ select.loading {
     margin: 0 !important;
     padding: 0 !important;
   }
+
+
+
+  /* Rebanho: remover completamente a 4ª coluna (Ações), se existir */
+  .pdf-export .tbl-rebanho thead th:nth-child(4),
+  .pdf-export .tbl-rebanho tbody td:nth-child(4),
+  .pdf-export .tbl-rebanho tfoot td:nth-child(4) {
+    display: none !important;
+  }
+
+  /* Opcional: se por acaso houver 5ª coluna “fantasma”, trate também */
+  /* .pdf-export .tbl-rebanho thead th:nth-child(5),
+     .pdf-export .tbl-rebanho tbody td:nth-child(5),
+     .pdf-export .tbl-rebanho tfoot td:nth-child(5) {
+       display: none !important;
+     } */
+
+
+
 }
 /*===========================FIM PDF======================================*/
 
@@ -1263,9 +1302,9 @@ select.loading {
   .c-area-util-corte   { min-width:  60px; }
   .c-quantidade-corte  { min-width:  70px; }
   .c-peso-corte        { min-width:  60px; }
-  .c-producao          { min-width: 100px; }
-  .c-saldo             { min-width: 110px; }
-  .c-acoes             { min-width: 110px; }
+  .c-producao-corte          { min-width: 100px; }
+  .c-saldo-corte             { min-width: 110px; }
+  .c-acoes-corte             { min-width: 110px; }
 
   /* -------- Histórico -------- */
   .c-ano-safra-historico   { min-width: 100px; }
@@ -1322,7 +1361,7 @@ select.loading {
   /* Mantém seu table-layout: fixed já definido no bloco de print
      e volta a usar width "fixo" nas colunas para caber na página */
   .pdf-export .c-cultura   { width: 180px; }
-  .pdf-export .c-data      { width: 120px; }
+  .pdf-export .c-data      { width: 140px; }
   .pdf-export .c-fonte     { width: 110px; }
   .pdf-export .c-municipio { width: 140px; }
   .pdf-export .c-estado    { width:  80px; }
@@ -1345,9 +1384,9 @@ select.loading {
   .pdf-export .c-area-util-corte   { width:  80px; }
   .pdf-export .c-quantidade-corte  { width:  80px; }
   .pdf-export .c-peso-corte        { width:  80px; }
-  .pdf-export .c-producao          { width: 100px; }
-  .pdf-export .c-saldo             { width: 130px; }
-  .pdf-export .c-acoes             { width: 110px; }
+  .pdf-export .c-producao-corte          { width: 110px; }
+  .pdf-export .c-saldo-corte             { width: 140px; }
+  .pdf-export .c-acoes-corte             { width: 110px; }
 
   .pdf-export .c-ano-safra-historico   { width: 100px; }
   .pdf-export .c-cultura-historico     { width: 180px; }
@@ -1365,14 +1404,14 @@ select.loading {
   .pdf-export .c-cor       { width: 140px; }
   .pdf-export .c-valor     { width: 130px; }
 
-  .pdf-export .c-ano-civil-leite     { width: 110px; }
-  .pdf-export .c-atividade-leite     { width: 180px; }
-  .pdf-export .c-producao-dia-leite  { width:  90px; }
-  .pdf-export .c-area-util-leite     { width:  90px; }
-  .pdf-export .c-quantidade-leite    { width: 120px; }
-  .pdf-export .c-producao-total      { width: 110px; }
-  .pdf-export .c-saldo               { width: 110px; }
-  .pdf-export .c-acoes               { width: 110px; }
+  .pdf-export .c-ano-civil-leite                 { width: 120px; }
+  .pdf-export .c-atividade-leite                 { width: 180px; }
+  .pdf-export .c-producao-dia-leite              { width:  90px; }
+  .pdf-export .c-area-util-leite                 { width:  90px; }
+  .pdf-export .c-quantidade-leite                { width: 120px; }
+  .pdf-export .c-producao-total-leite            { width: 130px; }
+  .pdf-export .c-saldo-leite                     { width: 130px; }
+  .pdf-export .c-acoes-leite                     { width: 130px; }
 
   .pdf-export .c-ano-safra-la        { width: 110px; }
   .pdf-export .c-atividade-la        { width: 180px; }
@@ -1391,24 +1430,17 @@ select.loading {
   .pdf-export .c-acoes-ovos            { width: 110px; }
 }
 
-/* =========================
-   3) (Opcional) Melhor UX
-   - Deixar a 1ª coluna “pegajosa” no mobile para orientar o usuário
-   ========================= */
-@media (max-width: 768px) {
-  /* Exemplo: primeira coluna fixa à esquerda (se quiser) */
-  .tbl-agricola th:first-child, .tbl-agricola td:first-child,
-  .tbl-precos th:first-child,   .tbl-precos td:first-child,
-  .tbl-historico th:first-child,.tbl-historico td:first-child,
-  .tbl-pecuaria th:first-child, .tbl-pecuaria td:first-child,
-  .tbl-pecuaria-leite th:first-child, .tbl-pecuaria-leite td:first-child,
-  .tbl-la th:first-child,       .tbl-la td:first-child,
-  .tbl-ovos th:first-child,     .tbl-ovos td:first-child,
-  .tbl-bens th:first-child,     .tbl-bens td:first-child,
-  .tbl-rebanho th:first-child,  .tbl-rebanho td:first-child {
-    position: sticky;
-    left: 0;
-    background: #fff; /* mantém legível sobre o scroll */
-    z-index: 1;
+@media print {
+  .pdf-export tfoot th,
+  .pdf-export tfoot td {
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  /* Garantir a última célula do tfoot visível nas tabelas afetadas */
+  .pdf-export :is(#tbl-agricola, #tbl-pecuaria) tfoot tr > *:last-child {
+    visibility: visible !important;
+    opacity: 1 !important;
+    display: table-cell !important;
   }
 }
