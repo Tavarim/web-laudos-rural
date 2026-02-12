@@ -1612,11 +1612,46 @@ function addRowRebanho(tbody, faixa = '', sexo = '', quantidade = 0, valund = 0)
 }
 
 
-
-
 /* ============================================================
-   BENS
+   BENS — COM MÁSCARA R$ NOS INPUTS
    ============================================================ */
+
+/* --- Máscara exclusiva para BENS com prefixo "R$ " --- */
+function maskBRLWithSymbol(inputEl) {
+  if (!inputEl) return;
+
+  function digits(s) {
+    return (s || '').replace(/\D/g, '');
+  }
+
+  function format(d) {
+    if (!d) return '';
+    let v = (parseInt(d, 10) / 100).toFixed(2);
+    v = v.replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    return 'R$ ' + v;
+  }
+
+  inputEl.addEventListener('input', function () {
+    const d = digits(this.value);
+    this.value = format(d);
+  });
+
+  inputEl.addEventListener('paste', e => {
+    e.preventDefault();
+    const text = (e.clipboardData || window.clipboardData).getData('text') || '';
+    this.value = format(digits(text));
+    this.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+
+  inputEl.addEventListener('blur', function () {
+    this.value = format(digits(this.value));
+  });
+
+  // inicial
+  inputEl.value = format(digits(inputEl.value));
+}
+
+/* --- Inicialização da tabela Bens --- */
 function initBens() {
   const itens = [
     ['TRATOR - SOLIS 26 4WD', 'SOLIS26/GTRA4WD', 2022, 'VERMELHO', 107000],
@@ -1624,10 +1659,12 @@ function initBens() {
     ['PULVERIZADOR', 'KUHN/ AF600', 2023, 'CINZA/LARANJA', 32375],
     ['ROCHADEIRA', 'AT8160', 2020, 'VERMELHA', 15000],
   ];
+
   const tbody = qs('#tbl-bens tbody');
   itens.forEach(item => addRowBem(tbody, ...item));
 }
 
+/* --- Adiciona uma linha na tabela Bens --- */
 function addRowBem(tbody, desc = '', modelo = '', ano = '', cor = '', valor = 0) {
   const tr = document.createElement('tr');
   tr.innerHTML = `
@@ -1635,26 +1672,53 @@ function addRowBem(tbody, desc = '', modelo = '', ano = '', cor = '', valor = 0)
     <td><input value="${modelo}" class="bem-modelo" /></td>
     <td><input value="${ano}" class="bem-ano" /></td>
     <td><input value="${cor}" class="bem-cor" /></td>
-    <td><input value="${String(valor).replace('.', ',')}" class="bem-valor" /></td>
+    <td><input class="bem-valor" placeholder="R$ 0,00" /></td>
     <td><button class="btn btn-remove" type="button">Remover</button></td>
   `;
   tbody.appendChild(tr);
 
+  /* --- Remover linha --- */
   tr.querySelector('.btn-remove').addEventListener('click', () => {
     tr.remove();
     recalcBensTotal();
   });
 
+  /* --- Aplicar máscara BRL COM símbolo --- */
+  const valorInput = tr.querySelector('.bem-valor');
+  maskBRLWithSymbol(valorInput);
+
+  /* --- Valor inicial com R$ --- */
+  if (valor) {
+    valorInput.value = 'R$ ' +
+      Number(valor)
+        .toFixed(2)
+        .replace('.', ',')
+        .replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  }
+
+  /* --- Recalcular ao digitar --- */
   const debounced = debounce(() => recalcBensTotal(), 120);
   qsa('input', tr).forEach(inp => inp.addEventListener('input', debounced));
 
   recalcBensTotal();
 }
 
+/* --- Soma total dos bens --- */
 function recalcBensTotal() {
-  const total = qsa('.bem-valor').reduce((acc, inp) => acc + num(inp.value), 0);
-  qs('#total-bens').textContent = brl(total);
+  const total = qsa('.bem-valor').reduce((acc, inp) => {
+    const raw = (inp.value || '')
+      .replace(/[R$\s]/g, '')
+      .replace(/\./g, '')
+      .replace(',', '.');
+
+    const v = parseFloat(raw);
+    return acc + (Number.isFinite(v) ? v : 0);
+  }, 0);
+
+  const out = qs('#total-bens');
+  if (out) out.textContent = brl(total); // já imprime R$
 }
+
 
 
 /* ============================================================
@@ -2116,26 +2180,57 @@ function generatePDFSkeleton() {
       });
       table.appendChild(tbody);
 
-      // Footer
+      // Footer (corrigido e robusto)
       const domFoot = domTable.querySelector('tfoot');
       if (domFoot) {
-          const tfoot = document.createElement('tfoot');
-          domFoot.querySelectorAll('tr').forEach(row => {
-              const newRow = document.createElement('tr');
-              row.querySelectorAll('td').forEach((cell, idx) => {
-                  if (skipIndices.includes(idx)) return;
-                  const newCell = document.createElement('td');
-                  newCell.style.border = '1px solid #ccc';
-                  newCell.style.padding = '5px';
-                  newCell.style.fontWeight = 'bold';
-                  newCell.style.backgroundColor = '#fafafa';
-                  newCell.innerHTML = cell.innerHTML;
-                  if (cell.hasAttribute('colspan') && idx === 0) newCell.setAttribute('colspan', colCount - 1);
-                  newRow.appendChild(newCell);
-              });
-              tfoot.appendChild(newRow);
+        const tfoot = document.createElement('tfoot');
+
+        domFoot.querySelectorAll('tr').forEach(row => {
+          const newRow = document.createElement('tr');
+
+          // Vamos controlar quantas "colunas lógicas" já somamos,
+          // respeitando colspans e desconsiderando os índices pulados.
+          let logicalColCount = 0;
+
+          Array.from(row.querySelectorAll('td')).forEach((cell, idx) => {
+            // Ignora colunas marcadas como "Ações" (as mesmas do thead)
+            if (skipIndices.includes(idx)) return;
+
+            const newCell = document.createElement('td');
+            newCell.style.border = '1px solid #ccc';
+            newCell.style.padding = '5px';
+            newCell.style.fontWeight = 'bold';
+            newCell.style.backgroundColor = '#fafafa';
+
+            // Copia o conteúdo como você já fazia
+            newCell.innerHTML = cell.innerHTML;
+
+            // ✅ PRESERVA o colspan original (NÃO recalcule para colCount - 1)
+            if (cell.hasAttribute('colspan')) {
+              const cs = Math.max(1, parseInt(cell.getAttribute('colspan'), 10) || 1);
+              newCell.setAttribute('colspan', String(cs));
+              logicalColCount += cs;
+            } else {
+              logicalColCount += 1;
+            }
+
+            newRow.appendChild(newCell);
           });
-          table.appendChild(tfoot);
+
+          // 🔒 Alinhamento garantido: se faltar coluna lógica, completa com células vazias
+          while (logicalColCount < colCount) {
+            const pad = document.createElement('td');
+            pad.style.border = '1px solid #ccc';
+            pad.style.padding = '5px';
+            pad.style.backgroundColor = '#fafafa';
+            newRow.appendChild(pad);
+            logicalColCount += 1;
+          }
+
+          tfoot.appendChild(newRow);
+        });
+
+        table.appendChild(tfoot);
       }
       wrapper.appendChild(table);
       return wrapper;
